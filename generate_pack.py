@@ -1,20 +1,6 @@
-from gt100_builder.parser import TSLParser
+"""Command-line entry point for inspecting and editing GT-100 LiveSets."""
 
-
-def main():
-    live = TSLParser("templates/LiveSet.tsl").load()
-
-    print(f"Device : {live.device}")
-    print(f"Version: {live.version}")
-    print(f"Patches: {len(live.patches)}")
-
-    patch = live.patches[0]
-
-    print()
-    print(f"Patch Name : {patch.name}")
-    print(f"GT100 Name : {patch.gt100_name1}{patch.gt100_name2}")
-    print(f"Category   : {patch.category}")
-    print(f"Parameters : {len(patch.params)}")
+from gt100_builder.cli import main
 
 
 if __name__ == "__main__":

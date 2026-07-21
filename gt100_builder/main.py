@@ -1,11 +1,4 @@
-from rich.console import Console
-
-console = Console()
-
-
-def main():
-    console.print("[bold green]GT100 Builder[/bold green]")
-    console.print("Loading LiveSet...")
+from .cli import main
 
 
 if __name__ == "__main__":

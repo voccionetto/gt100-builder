@@ -1,7 +1,13 @@
+"""Reader for JSON-based Boss GT-100 ``.TSL`` files."""
+
+from __future__ import annotations
+
 import json
 from pathlib import Path
+from typing import Any
 
-from gt100_builder.models import LiveSet, Patch
+from .models import LiveSet, Patch
+from .utils import detect_indent
 
 
 class TSLParser:
@@ -9,26 +15,24 @@ class TSLParser:
         self.filename = Path(filename)
 
     def load(self) -> LiveSet:
-        with open(self.filename, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        patches = []
-
-        for p in data["patchList"]:
-            patches.append(
-                Patch(
-                    name=p["name"],
-                    gt100_name1=p["gt100Name1"],
-                    gt100_name2=p["gt100Name2"],
-                    category=p.get("category"),
-                    params=p["params"],
-                    raw=p,
-                )
+        text = self.filename.read_text(encoding="utf-8")
+        data: dict[str, Any] = json.loads(text)
+        patches = [
+            Patch(
+                name=item.get("name", ""),
+                gt100_name1=item.get("gt100Name1", ""),
+                gt100_name2=item.get("gt100Name2", ""),
+                category=item.get("category"),
+                params=item.setdefault("params", {}),
+                raw=item,
             )
-
+            for item in data.get("patchList", [])
+        ]
         return LiveSet(
-            version=data["version"],
-            device=data["device"],
+            version=data.get("version", ""),
+            device=data.get("device", "GT"),
             patches=patches,
-            metadata=data["liveSetData"],
+            metadata=data.setdefault("liveSetData", {}),
+            raw=data,
+            indent=detect_indent(text),
         )
