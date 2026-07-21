@@ -4,3 +4,4 @@ __pycache__/
 
 # Generated LiveSets
 output/*.tsl
+/gt100_builder/__pycache__
